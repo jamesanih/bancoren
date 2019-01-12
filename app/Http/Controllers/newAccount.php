@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Mail\Mailer;
 use App\OpeningAccount;
 use App\User;
 use App\Customer;
+use Mail;
+
 
 class newAccount extends Controller
 {
@@ -67,9 +70,15 @@ class newAccount extends Controller
                     $customer->ac_balance = "0.00";
                     $customer->address = $location;
                     $customer->phone_no = $contact;
-                    
+                    //$confirm = $this->sendmail();
                    if( $customer->save()){
-                   return response()->json(['message'=>'created, Login with your email and password(12345)']);
+                        $confirm = $this->sendmail($email, $fname, $surname);
+                       if($confirm ==  "sent"){
+                        return response()->json(['message'=>'Account created, Check Your mail for details']);
+                       }else{ 
+                          return response()->json(['message'=>'mail not sent']);
+                       }
+                   //return response()->json(['message'=>'created, Login with your email and password(12345)']);
                    }else{
                        return response()->json(['message'=>'Account not created']);
                    }
@@ -89,6 +98,24 @@ class newAccount extends Controller
         if(isset($fname) && isset($surname) && isset($other_name) && isset($maiden_name) && isset($gender) && isset($date_of_birth) && isset($occupation) && isset($email) && isset($nationality) && isset($location) && isset($contact) && isset($account_type) && isset($personal_id) && isset($valid_date)){
             return "True";
         }
+    }
+
+    private function sendmail($email, $fname, $surname){
+        //$data = array('name' => "Test mail", "password" => "12345");
+        $data['password'] = "12345";
+        $data['name'] = $surname . " " . $fname; 
+        $data['email'] = $email;
+        $response = "sent";
+        //dd('Sending of message');
+        Mail::send('orders.mail', $data, function ($message) use($email) {
+             
+            $message->to($email)
+            ->bcc('anihuchenna16@gmail.com')
+            ->from('anihuchenna16@gmail.com')
+            ->subject('Test mail!!');
+        });
+
+        return $response;
     }
 
 }

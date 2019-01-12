@@ -149,7 +149,7 @@ class UserController extends Controller
     public function LoginTime(){
         if(Auth::login()){
             $id = Auth::user()->id;
-            $logintime = \Carbon\Carbon::now()->toDateTimeString();
+            $logintime = \Carbon\Carbon::now()->toDateTimeString();//get last login
 
             $user = User::find($id);
             $user->lastloggedIn = $logintime;
