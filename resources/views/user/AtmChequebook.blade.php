@@ -35,7 +35,7 @@
 				success:function(response){
 					console.log(response);
 					$("#msg").html(response.message);
-					$("#msg").fadeOut(2000);
+					$("#msg").fadeOut(3000);
 				}
 			})
 
@@ -49,21 +49,24 @@
 		<div class="row clearfix">
 			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 				<div class="card">
-					<p id="msg" class="alert bg-blue alert-success"></p>
+					
 					<div class="header">
 						<h2>Place Order</h2>
+						<p id="msg" class="alert bg-blue alert-success"></p>
 					</div>
 					<div class="body">
 					<div class="row clearfix">
 						<div class="col-sm-6">
+							
 							<div class="form-group form-float">
+								
 								<div class="form-line">
 									<input type="text" class="form-control" id="fname">
                                     <label class="form-label">First Name</label>
 								</div>
 							</div>
 						</div>
-
+					
 						<input type="hidden" value="{{csrf_token()}}" id="token">
 
 						<div class="col-sm-6">

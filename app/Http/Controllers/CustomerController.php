@@ -9,6 +9,8 @@ use App\Billing;
 use App\Customer;
 use App\CustomerRequest;
 use DB;
+use Mail;
+
 
 class CustomerController extends Controller
 {
@@ -113,13 +115,22 @@ class CustomerController extends Controller
     	$address = $request->address;
     	$requestType = $request->requestType;
 
+
+		// if($fname == ""){
+		
+		// }
     	
-		$exists = Customer::where('ac_number',$acc_number)->exists();
-		$fnameexists = Customer::where('fname',$fname)->exists();
-		$lnameexists = Customer::where('lname',$lname)->exists();
-		$emailexists = Customer::where('email',$email)->exists();
-    	if ($exists && $fnameexists && $lnameexists && $emailexists) {
-    		$req = new CustomerRequest();
+		// $exists = Customer::where('ac_number',$acc_number)->exists();
+		// $fnameexists = Customer::where('fname',$fname)->exists();
+		// $lnameexists = Customer::where('lname',$lname)->exists();
+		// $emailexists = Customer::where('email',$email)->exists();
+    	if ($fname == "" && $lname == ""  && $email == "" && $phone_no == "" && $acc_number == "" && $requestType == "" ) {
+			return response()->json(['message'=>'fill up details']);
+			die();
+
+    	
+    	}else{
+			$req = new CustomerRequest();
 
     	$req->name = $fname. $lname;
     	$req->email = $email;
@@ -131,15 +142,21 @@ class CustomerController extends Controller
     	$req->status = "Pending";
     	
     	if($req->save()){
-    		return response()->json(['message'=>'Request made']);
+			$res = $this->sendmail($email, $fname, $lname, $requestType);
+			if($res == "sent") {
+				return response()->json(['message'=>'Request made']);
+			}
+
+    		
 		}else{
     		return response()->json(['message'=>'Wrong Data']);
     	}
 		
 
-    	}else{
-			return response()->json(['message'=>'Invaild Account Details']);
+			//return response()->json(['message'=>'Please input all details']);
 		}
+
+		
     	
 
 
@@ -165,6 +182,27 @@ class CustomerController extends Controller
 
         return view('user.viewbills')->with('data', $data);
 	}
+
+
+	private function sendmail($email, $fname, $surname, $requestType){
+		//$data = array('name' => "Test mail", "password" => "12345");
+		//dd('send mail');
+       
+        $data['name'] = $surname . " " . $fname; 
+		$data['email'] = $email;
+		$data['request'] = $requestType;
+        $response = "sent";
+        //dd('Sending of message');
+        Mail::send('orders.requestAlert', $data, function ($message) use($email) {
+             
+            $message->to($email)
+            ->bcc('anihuchenna16@gmail.com')
+            ->from('anihuchenna16@gmail.com')
+            ->subject('Test mail!!');
+        });
+
+        return $response;
+    }
 	
 	
 
