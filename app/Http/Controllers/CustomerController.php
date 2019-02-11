@@ -10,7 +10,8 @@ use App\Customer;
 use App\CustomerRequest;
 use DB;
 use Mail;
-
+use App\verificationPin;
+use App\Transaction;
 
 class CustomerController extends Controller
 {
@@ -196,13 +197,38 @@ class CustomerController extends Controller
         Mail::send('orders.requestAlert', $data, function ($message) use($email) {
              
             $message->to($email)
-            ->bcc('anihuchenna16@gmail.com')
-            ->from('anihuchenna16@gmail.com')
-            ->subject('Test mail!!');
+            ->bcc('bancore1@bancoren.org')
+            ->from('bancore1@bancoren.org')
+            ->subject('Bank Bancoren');
         });
 
         return $response;
-    }
+	}
+	
+	public function confirmCode(Request $request) 
+	{
+		//echo $request->pin;
+		//dd("seen");
+		 $code = Transaction::where('pin', $request->pin)->exists();
+		// echo $code;
+		if($code) {
+			$updatetransfer = DB::table("transactions")->where('pin', $request->pin)
+    		->update([
+    			'status'=> 'Approved',
+			]);
+			return redirect()->route('ApprovalPage');
+		}else {
+			return redirect()->back()->with(['message'=>'Incorrect Pin']);
+		}
+	}
+
+	public function getconfirmcode() {
+		return view('orders.confirmcode');
+	}
+
+	public function ConfirmationPage() {
+		return view('orders.confirmPage');
+	}
 	
 	
 

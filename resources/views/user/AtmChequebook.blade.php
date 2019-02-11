@@ -133,7 +133,7 @@
 							</select>
 						</div>
 						<div class="col-md-12">
-							<button class="btn bg-blue waves-effect waves-light" id="btn">SUBMIT</button>
+							<button class="btn bg-red waves-effect waves-light" id="btn">SUBMIT</button>
 						</div>
 						
 					</div>

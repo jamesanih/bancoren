@@ -81,7 +81,7 @@ class UserController extends Controller
 
     	if (Auth::attempt(['email'=>$request->input('email'), 'password'=>$request->input('password')])) {
               
-                if (Auth::user()->status == "SuperAdmin") {
+                if (Auth::user()->status == "superadmin") {
                    return redirect()->route('dashboard');
                 }elseif(Auth::user()->status== "admin"){
                     return redirect()->route('dashboard');
@@ -243,6 +243,11 @@ class UserController extends Controller
         }else{
             return redirect()->back()->with(['message' =>'Not Confirmed!']);   
         }
+    }
+
+    public function Test(Request $request)
+    {
+        echo('test');
     }
 
 }

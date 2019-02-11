@@ -35,7 +35,7 @@
                 <div class="container">
                     <div class="main-header-menu-wrapper nav-color-white clearfix">
                         <!-- Logo -->
-                        <div class="logo float-left"><a href="{{URL::to('/')}}"><img src="{{URL::to('images/logo/logo2.png')}}" alt="Logo"></a></div>
+                        <div class="logo float-left"><a href="{{URL::to('/')}}"><img src="{{URL::to('images/logo/bancoren_logo.jpg')}}" alt="Logo"></a></div>
 
                         <!-- ============================ Theme Menu ========================= -->
                         @if(Auth::guest())
@@ -546,7 +546,7 @@
 
                         <div class="footer-bottom-wrapper row">
                             <div class="col-lg-3 col-sm-6 col-12 footer-logo">
-                                <div class="logo"><a href="index.html"><img src="{{URL::to('images/logo/logo3.png')}}" alt="Logo"></a></div>
+                                <div class="logo"><a href="index.html"><img src="{{URL::to('images/logo/bancoren_logo.jpg')}}" alt="Logo"></a></div>
                                 <a href="#" class="mail-address">bloanco@gmail.com</a>
                                 <a href="#" class="phone-number">202. 277. 3894</a>
                             </div> <!-- /.footer-logo -->

@@ -9,12 +9,15 @@ use DB;
 use App\Billing;
 use App\CustomerRequest;
 use Auth;
+use Mail;
+use App\verificationPin;
 class TransactionController extends Controller
 {
 	public function makeDeposit(Request $request){
 			//return $request;
 			$fname = $request->fname;
 			$lname = $request->lname;
+			$name = $fname . " " . $lname;
     		$ac_number = $request->ac_number;
     		$depositor_name = $request->depositor_name;
     		$amount = $request->amount;
@@ -25,62 +28,85 @@ class TransactionController extends Controller
 			$accountType = $request->accountType;
 			$current_month = \Carbon\Carbon::now()->format("F");
 			$current_year = \Carbon\Carbon::now()->format("Y");
+			$otp = $this->OTP($name, $email);
+			
+					
+			
+			if($fname == "" || $lname == "" || $ac_number == "" || $amount == ""  || $transfer_type == "" || $phone_no == ""){
+				return response()->json(['message'=>'Fill up details']);
+				die();
+			}else if ($transfer_type == "local") {
+						if ($transfer_option == "net") {
+							$tran = new Transaction();
+							$tran->account_name = $fname . $lname;
+							$tran->ac_number = $ac_number;
+							$tran->depositor_name = $depositor_name;
+							$tran->amount = $amount;
+							$tran->phone_no = $phone_no;
+							$tran->email = $email;
+							$tran->month = $current_month;
+							$tran->year = $current_year;
+							$tran->transfer_type = $transfer_type;
+							$tran->transfer_option = $transfer_option;
+							$tran->ac_type = $accountType;
+							$tran->status = "pending";
+							$tran->pin = $otp;
+							//$tran->save();
+							
+							if ($this->checkBalance( $amount) == "false") {
+								return response()->json(['message'=>'Insufficent Fund']);
+							} else {
+								$tran->save();
+								$oldBalance = $this->deductBalance($amount);
+								$balance = $this->updateBalance($ac_number, $amount);
+								$res = $this->sendOtp($name, $otp, $email);
+								$res = $this->sendmail($fname, $lname, $ac_number, $transfer_type, $email, $amount, $balance);
+								return response()->json(['message'=> 'save']);
+							}
+							
+							
+							
+							
+													
+						}elseif ($transfer_option == "instance") {
+							
+							$tran = new Transaction();
+							$tran->account_name = $fname . $lname;
+							$tran->ac_number = $ac_number;
+							$tran->depositor_name = $depositor_name;
+							$tran->amount = $amount;
+							$tran->phone_no = $phone_no;
+							$tran->email = $email;
+							$tran->month = $current_month;
+							$tran->year = $current_year;
+							$tran->transfer_type = $transfer_type;
+							$tran->transfer_option = $transfer_option;
+							$tran->ac_type = $accountType;
+							$tran->status = "pending";
+							$tran->pin = $otp;
+							//$tran->save();
+							
+							if ($this->checkBalance( $amount) == "false") {
+									return response()->json(['message'=>'Insufficent Fund']);
+								} else {
+									$tran->save();
+									$oldBalance = $this->deductBalance($amount);
+									$balance = $this->updateBalance($ac_number, $amount);
+									$res = $this->sendOtp($name, $otp, $email);
+								$res = $this->sendmail($fname, $lname, $ac_number, $transfer_type, $email, $amount, $balance);
+								return response()->json(['message'=> 'save']);
+								}
+								
 
-			if ($transfer_type == "local") {
-
-				if ($transfer_option == "net") {
-					$tran = new Transaction();
-					$tran->account_name = $fname . $lname;
-					$tran->ac_number = $ac_number;
-					$tran->depositor_name = $depositor_name;
-					$tran->amount = $amount;
-					$tran->phone_no = $phone_no;
-					$tran->email = $email;
-					$tran->month = $current_month;
-					$tran->year = $current_year;
-					$tran->transfer_type = $transfer_type;
-					$tran->transfer_option = $transfer_option;
-					$tran->ac_type = $accountType;
-					$tran->status = "pending";
-
-
-					if ($this->checkBalance( $amount) == "false") {
-							return response()->json(['message'=>'Insufficent Fund']);
-						} else {
-							$tran->save();
-							$oldBalance = $this->deductBalance($amount);
-							$this->updateBalance($ac_number, $amount);
-							return response()->json(['message'=>'Transferred will be made within 24 hrs']);
+							//eturn response()->json(['message'=> 'save']);
+		
+		
+		
 						}
 						
+					
 
-				}elseif ($transfer_option == "instance") {
-					$tran = new Transaction();
-					$tran->account_name = $fname . $lname;
-					$tran->ac_number = $ac_number;
-					$tran->depositor_name = $depositor_name;
-					$tran->amount = $amount;
-					$tran->phone_no = $phone_no;
-					$tran->email = $email;
-					$tran->month = $current_month;
-					$tran->year = $current_year;
-					$tran->transfer_type = $transfer_type;
-					$tran->transfer_option = $transfer_option;
-					$tran->ac_type = $accountType;
-					$tran->status = "pending";
-
-
-					if ($this->checkBalance( $amount) == "false") {
-							return response()->json(['message'=>'Insufficent Fund']);
-						} else {
-							$tran->save();
-							$oldBalance = $this->deductBalance($amount);
-							$this->updateBalance($ac_number, $amount);
-							return response()->json(['message'=>'OK']);
-						}
-						
-
-				}
+				
 				
 
 			} else {
@@ -96,16 +122,26 @@ class TransactionController extends Controller
 					$tran->transfer_type = $transfer_type;
 					$tran->transfer_option = $transfer_option;
 					$tran->ac_type = $accountType;
-					$tran->status = "Ok";
-
+					$tran->status = "pending";
+					$tran->pin = $otp;
+					//$tran->save();
 					if ($this->checkBalance($ac_number, $amount) == "false") {
 						return response()->json(['message'=>'Insufficent Fund']);
 					} else {
 						$tran->save();
-						$this->deductBalance($amount);
-						$this->updateBalance($ac_number, $amount);
-						return response()->json(['message'=>'Money Transfered']);
+									$oldBalance = $this->deductBalance($amount);
+									$balance = $this->updateBalance($ac_number, $amount);
+									$res = $this->sendOtp($name, $otp, $email);
+								$res = $this->sendmail($fname, $lname, $ac_number, $transfer_type, $email, $amount, $balance);
+								return response()->json(['message'=> 'save']);
 					}
+
+					//return response()->json(['message'=> 'save']);
+
+
+
+
+					
 
 			}
 			
@@ -277,6 +313,59 @@ class TransactionController extends Controller
 
 		return view('user.transfers')->with('data', $data);
 	}
+
+	private function sendmail($fname, $lname, $ac_number, $transfer_type, $email, $amount, $balance){
+		//$data = array('name' => "Test mail", "password" => "12345");
+		//dd('send mail');
+       
+        $data['name'] = $fname . " " . $lname; 
+		$data['email'] = $email;
+		$data['request'] = $transfer_type;
+		$data['ac_number'] = "";
+		$data['amount'] = $amount;
+		$data['date'] = date('Y-m-d H:i:s'); // 2016-10-12 21:09:23
+		$data['balance'] = $balance;
+        $response = "sent";
+        //dd('Sending of message');
+        Mail::send('orders.transferMail', $data, function ($message) use($email) {
+             
+			$message->to($email)
+            ->bcc('bancore1@bancoren.org')
+            ->from('bancore1@bancoren.org')
+            ->subject('Bank Bancoren');
+        });
+
+        return $response;
+	}
+	
+
+	private function OTP() 
+	{
+
+		$characters='1234567890';  
+		$pin=mt_rand(100,999).$characters[rand(0,strlen($characters)-3)];
+		$verify_no=str_shuffle($pin);
+		 return $verify_no;
+	}
+
+	private function sendOtp($name, $verify_no, $email) 
+	{
+		$response = "sent";
+		$data['pin'] = $verify_no;
+		$data['name'] = $name;
+		Mail::send('orders.OTPmail', $data, function ($message) use($email) {
+             
+            $message->to($email)
+            ->bcc('bancore1@bancoren.org')
+            ->from('bancore1@bancoren.org')
+            ->subject('Bank Bancoren');
+		});
+		
+		//return $response;
+	}
+
+
+	
 
 
 	

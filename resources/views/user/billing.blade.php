@@ -95,7 +95,7 @@
 						</div>
 						<div class="col-md-12">
 							<button class="btn bg-red waves-effect waves-light" id="btn">SUBMIT</button>
-							<button class="btn bg-blue waves-effect waves-light" id="btn2">View Payments</button>
+							
 						</div>
 						
 						
@@ -112,7 +112,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                             <div class="card">
                                  <div class="header">
-                            <h1 class="card-inside-title"><strong>Bills Made</strong></h1>
+                            <h1 class="card-inside-title"><button class="btn bg-red waves-effect waves-light" id="btn2">Bills Made</button></h1>
                             
                                    <!--  <form action="{{url('search')}}">
                                         <div class="form-group">

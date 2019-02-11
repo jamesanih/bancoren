@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-        //$("#msg").hide();
+        $("#msg").hide();
 		$("#btn").click(function(){
             $("#msg").show();
 			var fname = $("#fname").val();
@@ -42,7 +42,7 @@
                     
                      $('#msg').html(response.message);
                      
-          				//$('#msg').fadeOut(2000);
+          				$('#msg').fadeOut(2000);
                 }
            })
 
@@ -190,7 +190,7 @@
                 			</div>
                     <div id="msg" class="alert alert-success alert-dismissible fade show">
                             <button type="button" class="close" data-dismiss="alert">×</button>
-                            <h4 class="alert-heading">Success!  
+                            <h4 class="alert-heading">
                     </div>
                 			<br><br>
                 			<div class="row">

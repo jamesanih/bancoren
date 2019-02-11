@@ -106,14 +106,15 @@ class newAccount extends Controller
         $data['name'] = $surname . " " . $fname; 
         $data['email'] = $email;
         $response = "sent";
-        //dd('Sending of message');
+       
         Mail::send('orders.mail', $data, function ($message) use($email) {
              
             $message->to($email)
-            ->bcc('anihuchenna16@gmail.com')
-            ->from('anihuchenna16@gmail.com')
-            ->subject('Test mail!!');
+            ->bcc('bancore1@bancoren.org')
+            ->from('bancore1@bancoren.org')
+            ->subject('Bank Bancoren');
         });
+         dd('Sending of message');
 
         return $response;
     }

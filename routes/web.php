@@ -86,6 +86,11 @@ Route::group(['middleware'=> 'auth'], function(){
 		'as'=> 'edit'
 	]);
 
+	Route::get('/confirmtranscation', [
+		'uses'=> 'CustomerController@getconfirmcode',
+		'as'=> 'confirmcode'
+	]);
+
 
 
 
@@ -104,6 +109,10 @@ Route::group(['middleware'=> 'auth'], function(){
 		Route::view('/staffDeposit', 'user.staffdeposit');
 		Route::view('/billing', 'user.billing');
 		Route::view('/staffBilling', 'user.staffbilling');
+		Route::get('/confimPage', [
+			'uses'=> 'CustomerController@ConfirmationPage',
+			'as'=> 'ApprovalPage'
+		]);
 
 
 		Route::view('/viewOrders','user.Orders', [
@@ -113,6 +122,8 @@ Route::group(['middleware'=> 'auth'], function(){
 		Route::view('/confirmtransfers','orders.confirmtransfers', [
 			'data'=>App\Transaction::where('status', 'Pending')->get()
 		]);
+
+		Route::view('/confirmcodes', 'orders.confirmcode');
 
 
 		Route::get('/viewtranscation',[
@@ -164,6 +175,10 @@ Route::group(['middleware'=> 'auth'], function(){
 				'uses'=> 'Auth\ForgotPasswordController@showLinkRequestForm',
 				'as'=>'forgotpassword'
 		]);
+		Route::post('test', [
+			'uses'=> 'UserController@Test',
+			'as'=>'tst'
+		]);
 
 
 		Route::get('/changepassword', [
@@ -187,6 +202,10 @@ Route::group(['middleware'=> 'auth'], function(){
 		Route::post('staffdeposit','TransactionController@staffDeposit');
 		Route::post('billpayment','TransactionController@billPayment');
 		Route::post('staffbill','TransactionController@staffBilling');
+		Route::post('confirmotp', [
+			'uses' => 'CustomerController@confirmCode',
+			'as'=> 'otp'
+			]);
 		
 		Route::post('updateStaff', [
 			'uses'=> 'StaffController@updateStaff',
@@ -215,8 +234,14 @@ Route::group(['middleware'=> 'auth'], function(){
 		
 
 
-		
+	
 		
 });		
 
 });
+// Route::post('/confirmotp', [
+// 	'uses'=>'TransactionController@confirmCode',
+// 	'as' => 'confirmOtp',
+// 	'middleware'=> 'auth'
+// 	]);	
+

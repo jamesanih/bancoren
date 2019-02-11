@@ -5,6 +5,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#msg").hide();
+
 		$("#transferoption").hide();
 		$("#transferType").click(function(){
 			var transferType = $("#transferType").val();
@@ -15,8 +16,7 @@
 				
 			}
 		});
-		$("#btn").click(function(){
-			$("#msg").show();
+		$("#btn").click(function(){		
 			var fname = $("#fname").val();
 			var lname = $("#lname").val();
 			var ac_number = $("#ac_number").val();
@@ -28,6 +28,7 @@
 			var transferType = $("#transferType").val();
 			var accountType = $("#accountType").val();
 			var transferoption = $("#transferoption").val();
+			
 			//alert(token + bank_branch);
 
 
@@ -37,19 +38,28 @@
 				url: "<?php echo url('/admin/makedeposit')?>",
 				success:function(response){
 					//console.log(response)
+					if(response.message == "save") {
+						console.log('save');
+						window.location.href = "<?php echo route('confirmcode')?>";
+					}else{
+						$("#msg").show();
 						$('#msg').html(response.message);
           				$('#msg').fadeOut(2000);
+					}
+						
 				}
 
 			})
 		});
+
+		
 	});
 </script>
 <section class="content">
 	<div class="container-fluid">
 		<div class="row clearfix">
 			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-				<div class="card">
+				<div class="card" id="div1">
 					<p id="msg" class="alert bg-blue alert-success"></p>
 					<div class="header">
 						<h2>Transfer</h2>
@@ -154,5 +164,29 @@
 				</div>
 				</div>
 			</div>
+
+			{{--  modal  --}}
+			
+			
+			
+		{{--  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+			</div>
+		</div>
+		</div>  --}}
 
 @endsection

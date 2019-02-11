@@ -25,10 +25,10 @@
     <link href="{{URL::to('css/style.css')}}" rel="stylesheet">
 </head>
 
-<body class="login-page">
+<body class="login-page"></body>
     <div class="login-box">
         <div class="logo">
-            <a href="javascript:void(0);">Bank<b>BSB</b></a>
+            <a href="{{URL::to('/')}}">Bank <b>Bancoren</b></a>
            <!--  <small>Admin BootStrap Based - Material Design</small> -->
         </div>
 
